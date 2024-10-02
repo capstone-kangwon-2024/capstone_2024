@@ -24,3 +24,4 @@ Non-Bundled Plugins:
 -----------
 
 Pie
+Lan : JAVA
