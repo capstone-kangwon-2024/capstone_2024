@@ -24,7 +24,9 @@
 
         <activity
             android:name=".CCTVActivity"
-            android:exported="true" />
+            android:exported="true"
+            android:screenOrientation="landscape"
+            />
 
     </application>
 
