@@ -41,9 +41,7 @@ dependencies {
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
     implementation (libs.exoplayer.v2182);
+    implementation("org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.2.5")
 
-    // 기상청 데이터
-    implementation (libs.retrofit)
-    implementation (libs.converter.gson)
 
 }
