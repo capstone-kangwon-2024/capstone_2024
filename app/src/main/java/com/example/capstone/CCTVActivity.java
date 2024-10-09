@@ -2,6 +2,7 @@ package com.example.capstone;
 
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.MotionEvent;
 import android.widget.Button;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -117,40 +118,83 @@ public class CCTVActivity extends AppCompatActivity {
 
         //////////
 
-        btnUp.setOnClickListener(new View.OnClickListener() {
+        btnUp.setOnTouchListener(new View.OnTouchListener() {
             @Override
-            public void onClick(View v) {
-                publishMessage("up");
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        publishMessage("Forward");
+                        return true;
+                    case MotionEvent.ACTION_UP:
+                        publishMessage("Stop");
+                        return true;
+
+                    default:
+                        return false;
+                }
             }
         });
-        btnDown.setOnClickListener(new View.OnClickListener() {
+        btnDown.setOnTouchListener(new View.OnTouchListener() {
             @Override
-            public void onClick(View v) {
-                publishMessage("down");
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()){
+                    case MotionEvent.ACTION_DOWN:
+                        publishMessage("Backward");
+                        return true;
+
+                    case MotionEvent.ACTION_UP:
+                        publishMessage("Stop");
+                        return true;
+
+                    default:
+                        return false;
+                }
             }
         });
-        btnLeft.setOnClickListener(new View.OnClickListener() {
+        btnLeft.setOnTouchListener(new View.OnTouchListener() {
             @Override
-            public void onClick(View v) {
-                publishMessage("left");
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()){
+                    case MotionEvent.ACTION_DOWN:
+                        publishMessage("Left");
+                        return true;
+
+                    case MotionEvent.ACTION_UP:
+                        publishMessage("Stop");
+                        return true;
+
+                    default:
+                        return false;
+                }
             }
         });
-        btnRight.setOnClickListener(new View.OnClickListener() {
+        btnRight.setOnTouchListener(new View.OnTouchListener() {
             @Override
-            public void onClick(View v) {
-                publishMessage("right");
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()){
+                    case MotionEvent.ACTION_DOWN:
+                        publishMessage("Right");
+                        return true;
+
+                    case MotionEvent.ACTION_UP:
+                        publishMessage("Stop");
+                        return true;
+
+                    default:
+                        return false;
+                }
             }
         });
         btn1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                publishMessage("ball");
+                publishMessage("Ball");
             }
         });
         btn2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                publishMessage("feed");
+                publishMessage("Feed");
             }
         });
 
