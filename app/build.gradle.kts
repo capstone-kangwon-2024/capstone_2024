@@ -42,5 +42,8 @@ dependencies {
     androidTestImplementation(libs.espresso.core)
     implementation (libs.exoplayer.v2182);
 
+    // 기상청 데이터
+    implementation (libs.retrofit)
+    implementation (libs.converter.gson)
 
 }
