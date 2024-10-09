@@ -209,7 +209,7 @@ public class CCTVActivity extends AppCompatActivity {
     private void publishMessage(String message) {
         try {
             client.publish(
-                    "testtopic/",
+                    "control/",
                     message.getBytes(UTF_8),
                     2,
                     false);
