@@ -1,5 +1,11 @@
 pluginManagement {
     repositories {
+//        mavenCentral() // Maven 중앙 레포지토리
+//        google()
+//        mavenCentral()
+//        maven {
+//            url = uri("https://repo.eclipse.org/content/repositories/paho-releases/")
+//        }
         google {
             content {
                 includeGroupByRegex("com\\.android.*")

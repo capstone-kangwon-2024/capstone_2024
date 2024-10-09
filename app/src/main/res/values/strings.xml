@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">Capstone</string>
+    <string name="comfortable">SMART ROBOT\nCOMFORTABLE-FETCH</string>
+    <string name="comfort_for">COMFORT FOR YOUR DOG</string>
+    <string name="buttonImage">buttonImage</string>
+    <string name="robotImage">robotImage</string>
 </resources>
