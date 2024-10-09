@@ -1,5 +1,6 @@
 package com.example.capstone;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.view.MotionEvent;
 import android.webkit.WebSettings;
@@ -46,6 +47,7 @@ public class CCTVActivity extends AppCompatActivity {
     private Button btn1;
     private Button btn2;
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
