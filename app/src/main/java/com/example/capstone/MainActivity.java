@@ -21,12 +21,11 @@ public class MainActivity extends AppCompatActivity {
 
         Button button1 = findViewById(R.id.button1);
 
-        button1.setOnClickListener(v -> openCCTVActivity("rtsp://210.99.70.120:1935/live/cctv001.stream"));
+        button1.setOnClickListener(v -> openCCTVActivity());
     }
 
-    private void openCCTVActivity(String url) {
+    private void openCCTVActivity() {
         Intent intent = new Intent(MainActivity.this, CCTVActivity.class);
-        intent.putExtra("STREAM_URL", url);
         startActivity(intent);
     }
 }

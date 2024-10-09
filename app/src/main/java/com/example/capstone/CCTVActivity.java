@@ -3,6 +3,9 @@ package com.example.capstone;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.MotionEvent;
+import android.webkit.WebSettings;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.Button;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -58,19 +61,12 @@ public class CCTVActivity extends AppCompatActivity {
 
         modeButton = findViewById(R.id.button_mode);
 
-        StyledPlayerView playerView = findViewById(R.id.player_view);
-        player = new ExoPlayer.Builder(this).build();
-        playerView.setPlayer(player);
-
-        String streamUrl = getIntent().getStringExtra("STREAM_URL");
-        MediaItem mediaItem = MediaItem.fromUri(Uri.parse(streamUrl));
-
-        RtspMediaSource.Factory mediaSourceFactory = new RtspMediaSource.Factory();
-        RtspMediaSource mediaSource = mediaSourceFactory.createMediaSource(mediaItem);
-
-        player.setMediaSource(mediaSource);
-        player.prepare();
-        player.setPlayWhenReady(true);
+        WebView webView = findViewById(R.id.player_view);
+        webView.getSettings().setJavaScriptEnabled(true);
+        WebSettings webSettings = webView.getSettings();
+        webSettings.setUseWideViewPort(true);
+        webView.setWebViewClient(new WebViewClient());
+        webView.loadUrl("http://192.168.0.5:5000");
 
         // MQTT
         try {
