@@ -1,6 +1,7 @@
 package com.example.capstone;
 
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.MotionEvent;
 import android.webkit.WebSettings;
@@ -28,12 +29,16 @@ import javax.net.ssl.SSLSocketFactory;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 import java.util.Arrays;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 
 public class CCTVActivity extends AppCompatActivity {
     private ExoPlayer player;
     private static final String TAG = "MainActivity";
     private MqttClient client;
+
+    private final ExecutorService executorService = Executors.newSingleThreadExecutor();
 
     private Button homeButton;
     private Button modeButton;
@@ -202,17 +207,19 @@ public class CCTVActivity extends AppCompatActivity {
         });
     }
 
-    private void publishMessage(String message) {
-        try {
-            client.publish(
-                    "control/",
-                    message.getBytes(UTF_8),
-                    2,
-                    false);
-            Log.d(TAG, "Message sent: " + message);
-        } catch (MqttException e) {
-            Log.e(TAG, "Error sending message", e);
-        }
+    private void publishMessage(final String message) {
+        executorService.execute(() -> {
+            try {
+                client.publish(
+                        "control/",
+                        message.getBytes(UTF_8),
+                        2,
+                        false);
+                Log.d(TAG, "Message sent: " + message);
+            } catch (MqttException e) {
+                Log.e(TAG, "Error sending message", e);
+            }
+        });
     }
 
     @Override
@@ -226,5 +233,6 @@ public class CCTVActivity extends AppCompatActivity {
                 Log.e(TAG, "Error disconnecting from MQTT broker", e);
             }
         }
+        executorService.shutdown();
     }
 }
