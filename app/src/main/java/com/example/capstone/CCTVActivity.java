@@ -28,16 +28,34 @@ import java.util.Arrays;
 
 public class CCTVActivity extends AppCompatActivity {
     private ExoPlayer player;
-    private Button btn;
     private static final String TAG = "MainActivity";
     private MqttClient client;
+
+    private Button homeButton;
+    private Button modeButton;
+
+    private Button btnUp;
+    private Button btnDown;
+    private Button btnLeft;
+    private Button btnRight;
+
+    private Button btn1;
+    private Button btn2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cctv);
 
-        btn = findViewById(R.id.button2);
+
+        btnUp = findViewById(R.id.button_up);
+        btnDown = findViewById(R.id.button_down);
+        btnLeft = findViewById(R.id.button_left);
+        btnRight = findViewById(R.id.button_right);
+        btn1 = findViewById(R.id.button1);
+        btn2 = findViewById(R.id.button2);
+
+        modeButton = findViewById(R.id.button_mode);
 
         StyledPlayerView playerView = findViewById(R.id.player_view);
         player = new ExoPlayer.Builder(this).build();
@@ -89,29 +107,72 @@ public class CCTVActivity extends AppCompatActivity {
             Log.e(TAG, "Error connecting to MQTT broker", e);
         }
 
-        btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                try {
-                    client.publish(
-                            "testtopic/",
-                            "hello".getBytes(UTF_8),
-                            2,
-                            false);
-                    Log.d(TAG, "Message sent: hello");
-                } catch (MqttException e) {
-                    Log.e(TAG, "Error sending message", e);
-                }
-            }
-        });
-
-        // 버튼
-        Button homeButton = findViewById(R.id.button_home);
+        // HOME BUTTON
+        homeButton = findViewById(R.id.button_home);
         homeButton.setOnClickListener(v -> {
             player.stop();
             player.release();
             finish();
         });
+
+        //////////
+
+        btnUp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                publishMessage("up");
+            }
+        });
+        btnDown.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                publishMessage("down");
+            }
+        });
+        btnLeft.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                publishMessage("left");
+            }
+        });
+        btnRight.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                publishMessage("right");
+            }
+        });
+        btn1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                publishMessage("ball");
+            }
+        });
+        btn2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                publishMessage("feed");
+            }
+        });
+
+        modeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                publishMessage("mode");
+            }
+        });
+    }
+
+    private void publishMessage(String message) {
+        try {
+            client.publish(
+                    "testtopic/",
+                    message.getBytes(UTF_8),
+                    2,
+                    false);
+            Log.d(TAG, "Message sent: " + message);
+        } catch (MqttException e) {
+            Log.e(TAG, "Error sending message", e);
+        }
     }
 
     @Override
