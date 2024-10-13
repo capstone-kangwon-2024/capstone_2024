@@ -1,6 +1,8 @@
 package com.example.capstone;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.MotionEvent;
 import android.webkit.WebSettings;
@@ -38,6 +40,7 @@ public class CCTVActivity extends AppCompatActivity {
 
     private Button homeButton;
     private Button modeButton;
+    private Button detailButton;
 
     private Button btnUp;
     private Button btnDown;
@@ -112,6 +115,15 @@ public class CCTVActivity extends AppCompatActivity {
             player.stop();
             player.release();
             finish();
+        });
+
+        detailButton = findViewById(R.id.button_detail);
+        detailButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent urlintent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://24-capstone.kro.kr"));
+                startActivity(urlintent);
+            }
         });
 
         //////////

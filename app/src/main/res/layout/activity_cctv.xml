@@ -110,4 +110,13 @@
         android:layout_gravity="bottom|center_horizontal"
         android:layout_marginBottom="10dp" />
 
+    <Button
+        android:id="@+id/button_detail"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right"
+        android:layout_marginTop="10dp"
+        android:layout_marginRight="10dp"
+        android:text="DETAIL" />
+
 </FrameLayout>
