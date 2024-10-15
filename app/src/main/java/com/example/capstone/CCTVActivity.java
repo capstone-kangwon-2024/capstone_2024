@@ -1,6 +1,7 @@
 package com.example.capstone;
 
 import android.annotation.SuppressLint;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.MotionEvent;
 import android.webkit.WebSettings;
@@ -17,6 +18,8 @@ import org.eclipse.paho.client.mqttv3.MqttCallback;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
+
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
@@ -25,6 +28,7 @@ import javax.net.ssl.SSLSocketFactory;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 import java.util.Arrays;
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -33,6 +37,8 @@ public class CCTVActivity extends AppCompatActivity {
     private ExoPlayer player;
     private static final String TAG = "MainActivity";
     private MqttClient client;
+
+    private boolean isRecording = false;
 
     private final ExecutorService executorService = Executors.newSingleThreadExecutor();
 
@@ -46,6 +52,7 @@ public class CCTVActivity extends AppCompatActivity {
 
     private Button btn1;
     private Button btn2;
+    private Button btn3;
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -60,6 +67,7 @@ public class CCTVActivity extends AppCompatActivity {
         btnRight = findViewById(R.id.button_right);
         btn1 = findViewById(R.id.button1);
         btn2 = findViewById(R.id.button2);
+        btn3 = findViewById(R.id.button3);
 
         modeButton = findViewById(R.id.button_mode);
 
@@ -200,6 +208,36 @@ public class CCTVActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 publishMessage("mode");
+            }
+        });
+
+        touchRecordButton(btn3);
+    }
+
+    private void touchRecordButton(Button btn3) {
+        btn3.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        // Toggle the recording state
+                        if (!isRecording) {
+                            publishMessage("Start Recording");
+                            v.setBackgroundResource(R.drawable.button_record_state_pressed);
+                            Toast.makeText(CCTVActivity.this, "Recording started", Toast.LENGTH_SHORT).show();
+                            isRecording = true;
+                        } else {
+                            publishMessage("Stop Recording");
+                            v.setBackgroundResource(R.drawable.button_record_state);
+                            Toast.makeText(CCTVActivity.this, "Recording stopped", Toast.LENGTH_SHORT).show();
+                            isRecording = false;
+                        }
+                        return true;
+
+                    case MotionEvent.ACTION_UP:
+                        return true;
+                }
+                return false;
             }
         });
     }
