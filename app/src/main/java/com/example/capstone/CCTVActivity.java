@@ -212,6 +212,10 @@ public class CCTVActivity extends AppCompatActivity {
         });
 
         touchRecordButton(btn3);
+
+        //////////////////////////////
+
+
     }
 
     private void touchRecordButton(Button btn3) {
