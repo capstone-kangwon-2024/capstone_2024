@@ -1,21 +1,25 @@
 package com.example.capstone;
 
-import android.net.Uri;
+import android.annotation.SuppressLint;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.view.MotionEvent;
+import android.webkit.WebSettings;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.Button;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.exoplayer2.ExoPlayer;
-import com.google.android.exoplayer2.MediaItem;
-import com.google.android.exoplayer2.source.rtsp.RtspMediaSource;
-import com.google.android.exoplayer2.ui.StyledPlayerView;
 
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
+
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
@@ -24,12 +28,19 @@ import javax.net.ssl.SSLSocketFactory;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 import java.util.Arrays;
+import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 
 public class CCTVActivity extends AppCompatActivity {
     private ExoPlayer player;
     private static final String TAG = "MainActivity";
     private MqttClient client;
+
+    private boolean isRecording = false;
+
+    private final ExecutorService executorService = Executors.newSingleThreadExecutor();
 
     private Button homeButton;
     private Button modeButton;
@@ -41,7 +52,9 @@ public class CCTVActivity extends AppCompatActivity {
 
     private Button btn1;
     private Button btn2;
+    private Button btn3;
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,22 +67,16 @@ public class CCTVActivity extends AppCompatActivity {
         btnRight = findViewById(R.id.button_right);
         btn1 = findViewById(R.id.button1);
         btn2 = findViewById(R.id.button2);
+        btn3 = findViewById(R.id.button3);
 
         modeButton = findViewById(R.id.button_mode);
 
-        StyledPlayerView playerView = findViewById(R.id.player_view);
-        player = new ExoPlayer.Builder(this).build();
-        playerView.setPlayer(player);
-
-        String streamUrl = getIntent().getStringExtra("STREAM_URL");
-        MediaItem mediaItem = MediaItem.fromUri(Uri.parse(streamUrl));
-
-        RtspMediaSource.Factory mediaSourceFactory = new RtspMediaSource.Factory();
-        RtspMediaSource mediaSource = mediaSourceFactory.createMediaSource(mediaItem);
-
-        player.setMediaSource(mediaSource);
-        player.prepare();
-        player.setPlayWhenReady(true);
+        WebView webView = findViewById(R.id.player_view);
+        webView.getSettings().setJavaScriptEnabled(true);
+        WebSettings webSettings = webView.getSettings();
+        webSettings.setUseWideViewPort(true);
+        webView.setWebViewClient(new WebViewClient());
+        webView.loadUrl("http://192.168.0.5:5000");
 
         // MQTT
         try {
@@ -117,40 +124,83 @@ public class CCTVActivity extends AppCompatActivity {
 
         //////////
 
-        btnUp.setOnClickListener(new View.OnClickListener() {
+        btnUp.setOnTouchListener(new View.OnTouchListener() {
             @Override
-            public void onClick(View v) {
-                publishMessage("up");
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        publishMessage("Forward");
+                        return true;
+                    case MotionEvent.ACTION_UP:
+                        publishMessage("Stop");
+                        return true;
+
+                    default:
+                        return false;
+                }
             }
         });
-        btnDown.setOnClickListener(new View.OnClickListener() {
+        btnDown.setOnTouchListener(new View.OnTouchListener() {
             @Override
-            public void onClick(View v) {
-                publishMessage("down");
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()){
+                    case MotionEvent.ACTION_DOWN:
+                        publishMessage("Backward");
+                        return true;
+
+                    case MotionEvent.ACTION_UP:
+                        publishMessage("Stop");
+                        return true;
+
+                    default:
+                        return false;
+                }
             }
         });
-        btnLeft.setOnClickListener(new View.OnClickListener() {
+        btnLeft.setOnTouchListener(new View.OnTouchListener() {
             @Override
-            public void onClick(View v) {
-                publishMessage("left");
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()){
+                    case MotionEvent.ACTION_DOWN:
+                        publishMessage("Left");
+                        return true;
+
+                    case MotionEvent.ACTION_UP:
+                        publishMessage("Stop");
+                        return true;
+
+                    default:
+                        return false;
+                }
             }
         });
-        btnRight.setOnClickListener(new View.OnClickListener() {
+        btnRight.setOnTouchListener(new View.OnTouchListener() {
             @Override
-            public void onClick(View v) {
-                publishMessage("right");
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()){
+                    case MotionEvent.ACTION_DOWN:
+                        publishMessage("Right");
+                        return true;
+
+                    case MotionEvent.ACTION_UP:
+                        publishMessage("Stop");
+                        return true;
+
+                    default:
+                        return false;
+                }
             }
         });
         btn1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                publishMessage("ball");
+                publishMessage("Ball");
             }
         });
         btn2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                publishMessage("feed");
+                publishMessage("Feed");
             }
         });
 
@@ -160,19 +210,51 @@ public class CCTVActivity extends AppCompatActivity {
                 publishMessage("mode");
             }
         });
+
+        touchRecordButton(btn3);
     }
 
-    private void publishMessage(String message) {
-        try {
-            client.publish(
-                    "testtopic/",
-                    message.getBytes(UTF_8),
-                    2,
-                    false);
-            Log.d(TAG, "Message sent: " + message);
-        } catch (MqttException e) {
-            Log.e(TAG, "Error sending message", e);
-        }
+    private void touchRecordButton(Button btn3) {
+        btn3.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        // Toggle the recording state
+                        if (!isRecording) {
+                            publishMessage("Start Recording");
+                            v.setBackgroundResource(R.drawable.button_record_state_pressed);
+                            Toast.makeText(CCTVActivity.this, "Recording started", Toast.LENGTH_SHORT).show();
+                            isRecording = true;
+                        } else {
+                            publishMessage("Stop Recording");
+                            v.setBackgroundResource(R.drawable.button_record_state);
+                            Toast.makeText(CCTVActivity.this, "Recording stopped", Toast.LENGTH_SHORT).show();
+                            isRecording = false;
+                        }
+                        return true;
+
+                    case MotionEvent.ACTION_UP:
+                        return true;
+                }
+                return false;
+            }
+        });
+    }
+
+    private void publishMessage(final String message) {
+        executorService.execute(() -> {
+            try {
+                client.publish(
+                        "control/",
+                        message.getBytes(UTF_8),
+                        2,
+                        false);
+                Log.d(TAG, "Message sent: " + message);
+            } catch (MqttException e) {
+                Log.e(TAG, "Error sending message", e);
+            }
+        });
     }
 
     @Override
@@ -186,5 +268,6 @@ public class CCTVActivity extends AppCompatActivity {
                 Log.e(TAG, "Error disconnecting from MQTT broker", e);
             }
         }
+        executorService.shutdown();
     }
 }

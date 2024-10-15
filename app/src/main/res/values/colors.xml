@@ -2,4 +2,7 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="ball_feed">#DDFFEE</color>
+    <color name="home">#ddc3bb</color>
+    <color name="mode">#eeeecc</color>
 </resources>
