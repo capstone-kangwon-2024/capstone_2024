@@ -135,4 +135,14 @@
         android:background="@drawable/button_record_state"
         android:gravity="center"
         android:text="REC" />
+
+<!--    <Button-->
+<!--        android:id="@+id/button_detail"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_gravity="left|top"-->
+<!--        android:layout_marginTop="10dp"-->
+<!--        android:layout_marginLeft="10dp"-->
+<!--        android:text="DETAIL" />-->
+
 </FrameLayout>
