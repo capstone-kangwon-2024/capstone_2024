@@ -253,6 +253,37 @@ public class CCTVActivity extends AppCompatActivity {
             }
         });
 
+        client.setCallback(new MqttCallback() {
+            @Override
+            public void connectionLost(Throwable cause) {
+                Log.e(TAG, "Connection lost", cause);
+            }
+
+            @Override
+            public void messageArrived(String topic, MqttMessage message) {
+                String receivedMessage = new String(message.getPayload(), UTF_8);
+                Log.d(TAG, topic + ": " + receivedMessage);
+
+                // 메시지가 "CANT"일 경우 추가 동작
+                if ("CANT".equals(receivedMessage)) {
+                    // CANT 메시지를 받을 때 처리할 동작 추가
+                    Toast.makeText(CCTVActivity.this, "현재 공을 던질 수 없습니다", Toast.LENGTH_SHORT).show();
+                    Log.d(TAG, "Received CANT message from server");
+                    // 추가 작업을 여기에 넣으세요.
+                }
+
+                if ("WARN".equals(receivedMessage)) {
+                    Toast.makeText(CCTVActivity.this, "이상행동 탐지", Toast.LENGTH_SHORT).show();
+                    Log.d(TAG, "Detect abnormal behavior");
+                }
+            }
+
+            @Override
+            public void deliveryComplete(IMqttDeliveryToken token) {
+                Log.d(TAG, "Delivery complete");
+            }
+        });
+
         ///////////////////////////////////////////////////////////////////////////////////////////
 
         ////
