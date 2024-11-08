@@ -4,10 +4,17 @@
     <selectionStates>
       <SelectionState runConfigName="app">
         <option name="selectionMode" value="DROPDOWN" />
+<<<<<<< HEAD
         <DropdownSelection timestamp="2024-10-21T03:11:58.517883400Z">
           <Target type="DEFAULT_BOOT">
             <handle>
               <DeviceId pluginId="PhysicalDevice" identifier="serial=R3CX4000H9X" />
+=======
+        <DropdownSelection timestamp="2024-10-14T12:49:03.401569800Z">
+          <Target type="DEFAULT_BOOT">
+            <handle>
+              <DeviceId pluginId="LocalEmulator" identifier="path=C:\Users\manun\.android\avd\capstone2024_s23ultra.avd" />
+>>>>>>> 889eefcc773f153806ef8d4a0eb31f72b629b303
             </handle>
           </Target>
         </DropdownSelection>
