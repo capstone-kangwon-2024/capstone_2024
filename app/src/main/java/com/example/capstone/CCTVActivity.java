@@ -1,22 +1,24 @@
 package com.example.capstone;
 
-import android.net.Uri;
+import android.annotation.SuppressLint;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.MotionEvent;
+import android.webkit.WebSettings;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.Button;
+import com.example.capstone.CCTVActivity;
 
 import androidx.appcompat.app.AppCompatActivity;
-
-import com.google.android.exoplayer2.ExoPlayer;
-import com.google.android.exoplayer2.MediaItem;
-import com.google.android.exoplayer2.source.rtsp.RtspMediaSource;
-import com.google.android.exoplayer2.ui.StyledPlayerView;
 
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
+
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
@@ -25,12 +27,18 @@ import javax.net.ssl.SSLSocketFactory;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 import java.util.Arrays;
+import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 
 public class CCTVActivity extends AppCompatActivity {
-    private ExoPlayer player;
     private static final String TAG = "MainActivity";
     private MqttClient client;
+
+    private boolean isRecording = false;
+
+    private final ExecutorService executorService = Executors.newSingleThreadExecutor();
 
     private Button homeButton;
     private Button modeButton;
@@ -42,7 +50,9 @@ public class CCTVActivity extends AppCompatActivity {
 
     private Button btn1;
     private Button btn2;
+    private Button btn3;
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,22 +65,16 @@ public class CCTVActivity extends AppCompatActivity {
         btnRight = findViewById(R.id.button_right);
         btn1 = findViewById(R.id.button1);
         btn2 = findViewById(R.id.button2);
+        btn3 = findViewById(R.id.button3);
 
         modeButton = findViewById(R.id.button_mode);
 
-        StyledPlayerView playerView = findViewById(R.id.player_view);
-        player = new ExoPlayer.Builder(this).build();
-        playerView.setPlayer(player);
-
-        String streamUrl = getIntent().getStringExtra("STREAM_URL");
-        MediaItem mediaItem = MediaItem.fromUri(Uri.parse(streamUrl));
-
-        RtspMediaSource.Factory mediaSourceFactory = new RtspMediaSource.Factory();
-        RtspMediaSource mediaSource = mediaSourceFactory.createMediaSource(mediaItem);
-
-        player.setMediaSource(mediaSource);
-        player.prepare();
-        player.setPlayWhenReady(true);
+        WebView webView = findViewById(R.id.player_view);
+        webView.getSettings().setJavaScriptEnabled(true);
+        WebSettings webSettings = webView.getSettings();
+        webSettings.setUseWideViewPort(true);
+        webView.setWebViewClient(new WebViewClient());
+        webView.loadUrl(MainActivity.ip_txt);
 
         // MQTT
         try {
@@ -102,8 +106,6 @@ public class CCTVActivity extends AppCompatActivity {
                 }
             });
 
-            client.subscribe("#", 1);
-
         } catch (MqttException e) {
             Log.e(TAG, "Error connecting to MQTT broker", e);
         }
@@ -111,8 +113,6 @@ public class CCTVActivity extends AppCompatActivity {
         // HOME BUTTON
         homeButton = findViewById(R.id.button_home);
         homeButton.setOnClickListener(v -> {
-            player.stop();
-            player.release();
             finish();
         });
 
@@ -188,41 +188,107 @@ public class CCTVActivity extends AppCompatActivity {
         btn1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                publishMessage("Ball");
+                publishMessage("Fire"); Toast.makeText(CCTVActivity.this, "공을 발사합니다!", Toast.LENGTH_SHORT).show();
             }
         });
         btn2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                publishMessage("Feed");
+                publishMessage("Feed"); Toast.makeText(CCTVActivity.this, "간식을 배급합니다!", Toast.LENGTH_SHORT).show();
             }
         });
 
         modeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                publishMessage("mode");
+                publishMessage("ChangeMode");
+            }
+        });
+
+        client.setCallback(new MqttCallback() {
+            @Override
+            public void connectionLost(Throwable cause) {
+                Log.e(TAG, "Connection lost", cause);
+            }
+
+            @Override
+            public void messageArrived(String topic, MqttMessage message) {
+                String receivedMessage = new String(message.getPayload(), UTF_8);
+                Log.d(TAG, topic + ": " + receivedMessage);
+
+                if ("WARN".equals(receivedMessage)) {
+                    Toast.makeText(CCTVActivity.this, "이상행동 탐지", Toast.LENGTH_SHORT).show();
+                    Log.d(TAG, "Detect abnormal behavior");
+                }
+
+                else {
+                    // 다른 메시지를 받을 때 처리할 동작 추가
+                    Toast.makeText(CCTVActivity.this, "공을 던질 수 없습니다. 사유 : " + receivedMessage, Toast.LENGTH_SHORT).show();
+                    Log.d(TAG, "Received CANT message from server");
+                }
+            }
+
+            @Override
+            public void deliveryComplete(IMqttDeliveryToken token) {
+                Log.d(TAG, "Delivery complete");
+            }
+        });
+
+        touchRecordButton(btn3);
+
+        //////////////////////////////
+
+
+    }
+
+    private void touchRecordButton(Button btn3) {
+        btn3.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        // Toggle the recording state
+                        if (!isRecording) {
+                            publishMessage("Start Recording");
+                            v.setBackgroundResource(R.drawable.button_record_state_pressed);
+                            Toast.makeText(CCTVActivity.this, "Recording started", Toast.LENGTH_SHORT).show();
+                            btn3.setTextColor(Color.parseColor("#ff0000"));
+                            isRecording = true;
+                        } else {
+                            publishMessage("Stop Recording");
+                            v.setBackgroundResource(R.drawable.button_record_state);
+                            Toast.makeText(CCTVActivity.this, "Recording stopped", Toast.LENGTH_SHORT).show();
+                            btn3.setTextColor(Color.parseColor("#ffffff"));
+                            isRecording = false;
+                        }
+                        return true;
+
+                    case MotionEvent.ACTION_UP:
+                        return true;
+                }
+                return false;
             }
         });
     }
 
-    private void publishMessage(String message) {
-        try {
-            client.publish(
-                    "control/",
-                    message.getBytes(UTF_8),
-                    2,
-                    false);
-            Log.d(TAG, "Message sent: " + message);
-        } catch (MqttException e) {
-            Log.e(TAG, "Error sending message", e);
-        }
+    private void publishMessage(final String message) {
+        executorService.execute(() -> {
+            try {
+                client.publish(
+                        "control",
+                        message.getBytes(UTF_8),
+                        0,
+                        false);
+                Log.d(TAG, "Message sent: " + message);
+            } catch (MqttException e) {
+                Log.e(TAG, "Error sending message", e);
+            }
+        });
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        player.release();
         if (client != null && client.isConnected()) {
             try {
                 client.disconnect();
@@ -230,5 +296,6 @@ public class CCTVActivity extends AppCompatActivity {
                 Log.e(TAG, "Error disconnecting from MQTT broker", e);
             }
         }
+        executorService.shutdown();
     }
 }

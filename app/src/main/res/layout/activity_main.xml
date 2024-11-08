@@ -9,70 +9,163 @@
     tools:context=".MainActivity">
 
     <LinearLayout
-        android:id="@+id/linearLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@color/background_color"
         android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/comfortable"
-            android:layout_width="400dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="70dp"
-            android:layout_marginBottom="29dp"
-            android:lineSpacingExtra="8sp"
-            android:text="@string/comfortable"
-            android:fontFamily="@font/gabiagosran"
-            android:textAppearance="@style/comfortable" />
 
-        <ImageView
-            android:id="@+id/imageView2"
-            android:layout_width="400dp"
-            android:layout_height="400dp"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="60dp"
-            android:contentDescription="@string/robotImage"
-            android:rotation="29"
-            app:srcCompat="@drawable/robot" />
 
-        <TextView
-            android:id="@+id/comfort_for"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="30dp"
-            android:lineSpacingExtra="3sp"
-            android:textSize="20sp"
-            android:text="@string/comfort_for"
-            />
-
-        <RelativeLayout
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
             <ImageView
-                android:id="@+id/imageView3"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:contentDescription="@string/buttonImage"
-                android:elevation="10dp"
-                app:srcCompat="@drawable/icon" />
+                android:id="@+id/view"
+                android:background="@drawable/line"
+                android:layout_gravity="center"
+                android:layout_marginTop="50dp"
+                android:layout_marginBottom="10dp"
+                android:layout_width="360dp"
+                android:layout_height="1dp"
+                android:contentDescription="@string/line" />
 
-            <Button
-                android:id="@+id/button1"
-                android:layout_width="80dp"
-                android:layout_height="80dp"
-                android:layout_gravity="center_horizontal|bottom"
-                android:layout_centerVertical="true"
-                android:layout_centerHorizontal="true"
-                android:layout_marginBottom="50dp"
-                android:contentDescription="@string/app_name"
-                android:background="@drawable/robotbutton"
-                />
-        </RelativeLayout>
+
+            <TextView
+                android:id="@+id/comfortable"
+                android:layout_width="400dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="0dp"
+                android:layout_marginBottom="29dp"
+                android:fontFamily="@font/gabiagosran"
+                android:gravity="center"
+                android:lineSpacingExtra="8sp"
+                android:text="@string/comfortable"
+                android:textAppearance="@style/comfortable"
+                android:textSize="40sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/roundedcornerslefttoprighttop"
+            android:orientation="vertical">
+
+            <ImageView
+                android:id="@+id/view1"
+                android:background="@drawable/line"
+                android:layout_gravity="center"
+                android:layout_marginTop="20dp"
+                android:layout_width="70dp"
+                android:layout_height="3dp"
+                android:contentDescription="@string/line" />
+
+            <LinearLayout
+                android:layout_width="400dp"
+                android:layout_height="400dp"
+                android:layout_gravity="center"
+                android:layout_marginTop="20dp"
+                android:background="@drawable/robot_box"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:id="@+id/imageView2"
+                    android:layout_width="248dp"
+                    android:layout_height="248dp"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="40dp"
+                    android:contentDescription="@string/robotImage"
+                    android:rotation="7"
+                    app:srcCompat="@drawable/robot" />
+
+                <TextView
+                    android:id="@+id/comfort_for"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="30dp"
+                    android:lineSpacingExtra="3sp"
+                    android:textSize="20sp"
+                    android:text="@string/comfort_for"
+                    />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="42dp"
+                    android:layout_marginTop="10dp"
+                    android:gravity="center"
+                    >
+
+
+                    <EditText
+                        android:id="@+id/IP_Text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:singleLine="true"
+                        android:hint="로봇캠 IP를 입력하세요"
+                        android:inputType="textPersonName" />
+                    <Button
+                        android:id="@+id/IP_Text_Enter"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="엔터"
+                        />
+                </LinearLayout>
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:gravity="center"
+                >
+
+
+                <LinearLayout
+                    android:id="@+id/linearLayout_buttons"
+                    android:layout_width="400dp"
+                    android:layout_height="120dp"
+                    android:orientation="horizontal"
+                    android:gravity="center">
+
+
+<!--                    <Button-->
+<!--                        android:id="@+id/button"-->
+<!--                        style="@style/SelectableItemBackground"-->
+<!--                        android:layout_width="100dp"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:layout_marginStart="40dp"-->
+<!--                        android:layout_weight="1"-->
+<!--                        android:background="@drawable/robotbutton"-->
+<!--                        android:foreground="?android:attr/selectableItemBackground"-->
+<!--                        android:text="@string/detail" />-->
+
+                    <Button
+                        android:id="@+id/button1"
+                        android:layout_width="100dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="40dp"
+                        android:layout_marginStart="60dp"
+                        android:background="@drawable/robotbutton1"
+                        android:foreground="?android:attr/selectableItemBackground"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        style="@style/SelectableItemBackground"
+                        android:contentDescription="@string/app_name"
+                        android:text="@string/robot" />
+
+                </LinearLayout>
+
+
+            </LinearLayout>
+
+        </LinearLayout>
 
     </LinearLayout>
 </RelativeLayout>

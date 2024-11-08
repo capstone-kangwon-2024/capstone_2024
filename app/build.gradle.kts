@@ -42,6 +42,4 @@ dependencies {
     androidTestImplementation(libs.espresso.core)
     implementation (libs.exoplayer.v2182);
     implementation("org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.2.5")
-
-
 }
